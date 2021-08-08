@@ -1,0 +1,128 @@
+
+/* Global vars */
+:root {
+
+  /* Fonts */
+  --font-h1: 'blood_crowregular';
+  --font-buttons: 'pieces_of_eightregular';
+
+  /* Colors */
+  --section-bgcolor: rgba(220, 220, 220, 0.7);
+  --h1-color: rgb(38, 15, 77);
+  /* --header-text-shadow: rgb(220, 200, 200);
+  --nav-background: linear-gradient(90deg, rgba(220,220,220,1) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,1) 60%, rgba(220,220,220,1) 100%); */
+}
+@media screen {
+  :root {
+    --adaptive-width: 90%;
+  }
+}
+@media screen and (min-width: 800px) {
+  :root {
+    --adaptive-width: 30%;
+  }
+}
+
+/* Fonts */
+@font-face {
+  font-family: 'blood_crowregular';
+  src: url('./assets/fonts/bloodcrow-webfont.woff2') format('woff2'),
+       url('./assets/fonts/bloodcrow-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'pieces_of_eightregular';
+  src: url('./assets/fonts/pieces_of_eight-webfont.woff2') format('woff2'),
+       url('./assets/fonts/pieces_of_eight-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+/* Animations */
+@keyframes horizontal-unfolding {
+  from {    
+    width: 0%;
+  }
+}
+
+
+
+
+
+
+/* CSS properties */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* border: 1px solid black; */
+}
+
+body {
+  background: url("./assets/img/sea_cave_cthulhu.jpg") center no-repeat fixed;
+  /* background: black; */
+}
+
+#page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+main, footer {
+  background: var(--section-bgcolor);
+  border-radius: 1vw;
+  padding: 2vmin;
+  margin: 1vmin;
+  
+  animation-name: horizontal-unfolding;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+
+  width: var(--adaptive-width);
+}
+
+h1 {
+  font-family: var(--font-h1);
+  font-size: 10vmin;
+  color: var(--h1-color);
+  text-shadow: 1px 1px 5px rgb(255, 255, 255);
+}
+header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+
+  width: 10vmin;
+  padding: 2vmin;
+  margin: 1vmin;
+
+}
+main {
+  flex: 1;
+  /* min-width: 30%; */
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+footer {
+  display: flex;
+  flex-flow: row wrap;
+  min-height: 10vh;
+}
+.tool-button {
+  font-family: var(--font-buttons);
+  font-size: 5vmin;
+
+  display: block;
+  width: 100%;
+  padding: 1vmin;
+  margin: 1vmin;
+}
+
+

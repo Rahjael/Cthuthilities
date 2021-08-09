@@ -2,7 +2,7 @@
 // Tools config
 const TOOLS = {
     "Quick Dice Roller": 'diceRoller',
-    "Firearms Calculator": 'firearmsCalc',
+    "Full Auto Calculator": 'fullAutoCalc',
     "Tome Learning": 'tomeLearning',
     "Chase Mechanics": 'chaseMechanics'
     };
@@ -69,7 +69,7 @@ function showCredits() {
   let disclaimer = document.createElement('div');
   disclaimer.id = 'disclaimer';
   disclaimer.style.textAlign = 'justify';
-  disclaimer.innerText = `All images and fonts were free for personal use at the moment of download. If you recognise something as yours and you wish it removed from this website, please write to blabblabla@blabla.com`;
+  disclaimer.innerText = `All images and fonts were free for personal use at the moment of download. If you recognise anything as yours and you wish it removed from this website, please contact me via Github, link at Project Page`;
 
   const toolData = {
     displayName: 'Credits',

@@ -7,9 +7,7 @@ const TOOLS = {
     "Chase Mechanics": 'chaseMechanics'
     };
 const TOOLS_PATH = './tools/';
-
 const SESSION = {};
-
 
 
 // Functions
@@ -85,8 +83,6 @@ function showCredits() {
 
 
 // Stuff executed at first load
-
-
 loadAtStartup();
 
 // document.querySelector('h1').addEventListener('click', () => {

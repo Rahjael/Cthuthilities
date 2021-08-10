@@ -199,11 +199,16 @@ footer {
 }
 .fullAutoCalc-input-div {
   display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+
 }
 .fullAutoCalc-labels {
   font-size: 1.3em;
   margin: 0 0 0 0;
 }
 .fullAutoCalc-inputs {
-  margin: 0 0 0 2em;
+  text-align: center;
+  max-width: 3em;
+  margin: 0 0 0 0;
 }

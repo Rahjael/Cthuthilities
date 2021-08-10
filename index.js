@@ -69,7 +69,11 @@ function showCredits() {
   let disclaimer = document.createElement('div');
   disclaimer.id = 'disclaimer';
   disclaimer.style.textAlign = 'justify';
-  disclaimer.innerText = `All images and fonts were free for personal use at the moment of download. If you recognise anything as yours and you wish it removed from this website, please contact me via Github, link at Project Page`;
+  disclaimer.innerText = `All images and fonts were free for personal use at the moment of download. If you recognise anything as yours and you wish it removed from this website, please contact me via Github, link at Project Page
+  
+  // TODO add links
+  
+  `;
 
   const toolData = {
     displayName: 'Credits',

@@ -1,5 +1,5 @@
 const FULLAUTOCALC_INPUTS = {
-  weapSkill: 0,
+  weapSkill: 65,
   targets: [],
   noOfVolleys: 1,
   wastedDist: 0,
@@ -21,7 +21,7 @@ function fullAutoCalc() {
   container.append(inputDiv);
 
   
-  inputDiv.append(getResultsDiv());
+  container.append(getResultsDiv());
 
 
   const toolData = {
@@ -58,7 +58,7 @@ function getInputContainer() {
   calcButton.type = 'button';
   calcButton.innerText = 'Calculate';
   calcButton.onclick = calculate;
-  inputDiv.append(calcButton);  
+  inputDiv.append(calcButton);
 
 
   return inputDiv;
@@ -177,24 +177,21 @@ function getTargetsTable() {
         })[0]; // XXX Careful here: [0]
         changed[e.target.id] = e.target.value;
 
-        console.log(changed)
+        console.log(changed);
       };
       return field;
     });
 
     let newObj = {
       id: numId,
-      name: '',
+      name: 'Target ' + (numId + 1),
       volleys: 1,
       armor: 0,
       bonPen: 0
     };
 
     // Set default values for new row
-    inputFields.forEach((field, i) => {
-      if(field.id === 'name') field.value = 'Target ' + (FULLAUTOCALC_INPUTS.targets.length + 1);
-      else field.value = newObj[field.id];
-    });
+    inputFields.forEach(field => field.value = newObj[field.id]);
 
     FULLAUTOCALC_INPUTS.targets.push(newObj);
 
@@ -252,7 +249,11 @@ function calculate() {
   //   rangeDifficulty: 0 // 0: normal, 1: hard, 2: extreme, 4: critical, 5: impossible
   // }
 
-  console.log("entered calculate");
+  // Empty log container of previous data
+  document.querySelector('#fullAutoCalc-results-div').remove();
+  document.querySelector('#fullAutoCalc-container').append(getResultsDiv());
+
+
 
   let modGenerator = getRollModifier();
   let targets = FULLAUTOCALC_INPUTS.targets;
@@ -284,7 +285,7 @@ function calculate() {
       addLog("Rolled: " + String(rolls));
       return Math.min(...rolls);
     }
-    else if(bonPen < 0) {      
+    else if(bonPen < 0) {
       rolls.push(...[...Array(bonPen * -1).keys()].map(val => rollRandom(100)));
       addLog("Rolled: " + String(rolls));
       return Math.max(...rolls);
@@ -296,14 +297,28 @@ function calculate() {
     console.log("Iterating targets");
     for(let j = 0; j < Number(targets[i].volleys); j++) {
       console.log("Iterating target's volleys")
-      modifiers = modGenerator.next().value;
-      let successLevel = rangeDifficulty + modifiers[1];
+      modifiers = modGenerator.next().value || [0, 100];
       let startingBonPen = Number(FULLAUTOCALC_INPUTS.targets[i].bonPen);
-      let roll = rollWithMods(startingBonPen + modifiers[0]);
+
+      // Get modifiers for current iteration and adjust them
+      modifiers[0] += startingBonPen;
+      while(modifiers[0] < -2) {
+        modifiers[0]++;
+        modifiers[1]++;
+      }
+      while(modifiers[0] > 2) {
+        modifiers[0]--;
+        modifiers[1]--;
+      }
+      
+      let successLevel = rangeDifficulty + modifiers[1];
+      let requiredRoll = successThresh[successLevel] || 'Too low';
+
+      let roll = rollWithMods(modifiers[0]);
 
       console.log("Roll:", roll);
 
-      addLog("Shooting at target: " + targets[i].name + ' (' + successThresh[successLevel] + ' required)', 'black');
+      addLog("Shooting at target: " + targets[i].name + ' (' + requiredRoll + ' required)', 'black');
 
       if(roll >= 96) {
         if( weapSkill < 50 || (weapSkill >= 50 && roll == 100)) {

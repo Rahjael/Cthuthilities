@@ -1,11 +1,12 @@
 const FULLAUTOCALC_INPUTS = {
   weapSkill: 0,
   targets: [],
-  noOfVolleys: 1,
+  noOfVolleys: 0,
   wastedDist: 0,
   volleySize: 3,
   rangeDifficulty: 0 // 0: normal, 1: hard, 2: extreme, 4: critical, 5: impossible
 };
+
 
 function fullAutoCalc() {
   // Prepare tool container
@@ -18,28 +19,14 @@ function fullAutoCalc() {
   inputDiv.id = toolName + '-input-container';
 
 
+
   container.append(inputDiv);
-
-  
-  inputDiv.append(getResultsDiv());
-
-
   const toolData = {
     toolTitle: 'Firearms Calculator',
     mainContent: container
   }
   return toolData;
 }
-
-
-
-
-
-
-
-
-
-
 
 function getInputContainer() {
   let inputDiv = document.createElement('div');
@@ -50,16 +37,8 @@ function getInputContainer() {
   inputDiv.append(getInputDiv('Volley Size', 'volleySize', 3, 10, volleySizeCallback));
   inputDiv.append(getInputDiv('Range Difficulty', 'rangeDifficulty', 0, 5, simpleCallback));
 
-  inputDiv.append(getTargetsTable());
-  
-  let calcButton = document.createElement('button');
-  calcButton.id = 'fullAutoCalc-calculate-button';
-  calcButton.classList.add('default-font');
-  calcButton.type = 'button';
-  calcButton.innerText = 'Calculate';
-  calcButton.onclick = calculate;
-  inputDiv.append(calcButton);  
 
+  inputDiv.append(getTargetsTable());
 
   return inputDiv;
 }
@@ -144,6 +123,8 @@ function getTargetsTable() {
     let delButton = document.createElement('button');
     delButton.type = 'button';
     delButton.onclick = () => {
+      // console.log(document.querySelector('#' + targetContainer.id));
+      // document.querySelector('#' + targetContainer.id).remove();
       targetContainer.remove();
       // Reset all progressive ids
       let rows = document.querySelectorAll('.' + className);
@@ -156,9 +137,9 @@ function getTargetsTable() {
         return {
           id: i,
           name: row.children[1].value,
-          volleys: Number(row.children[2].value),
-          armor: Number(row.children[3].value),
-          bonPen: Number(row.children[4].value)
+          volleys: row.children[2].value,
+          armor: row.children[3].value,
+          bonPen: row.children[4].value
         };
       });
     };
@@ -176,25 +157,18 @@ function getTargetsTable() {
           return isMatch;
         })[0]; // XXX Careful here: [0]
         changed[e.target.id] = e.target.value;
-
-        console.log(changed)
+        console.log(FULLAUTOCALC_INPUTS.targets);
       };
       return field;
-    });
+    })
 
     let newObj = {
       id: numId,
       name: '',
-      volleys: 1,
-      armor: 0,
-      bonPen: 0
+      volleys: '',
+      armor: '',
+      bonPen: ''
     };
-
-    // Set default values for new row
-    inputFields.forEach((field, i) => {
-      if(field.id === 'name') field.value = 'Target ' + (FULLAUTOCALC_INPUTS.targets.length + 1);
-      else field.value = newObj[field.id];
-    });
 
     FULLAUTOCALC_INPUTS.targets.push(newObj);
 
@@ -216,140 +190,19 @@ function getTargetsTable() {
 }
 
 
-function getResultsDiv() {
-  let div = document.createElement('div');
-  div.id = 'fullAutoCalc-results-div';
-  return div;
-}
 
 
 
-function* getRollModifier() {
-  // Returns [penaltyDice, difficultyIncrease];
-  console.log("Generator 1st iteration");
-  yield [0, 0];
-  console.log("Generator 2nd iteration");
-  yield [-1, 0];
-  console.log("Generator 3rd iteration");
-  yield [-2, 0];
-  console.log("Generator 4th iteration");
-  yield [-2, 1];
-  console.log("Generator 5th iteration");
-  yield [-2, 2];
-  console.log("Generator 6th iteration");
-  yield [-2, 3];
-  console.log("Generator 7th iteration");
-  yield [-2, 4];
-}
-
-function calculate() {
-  // FULLAUTOCALC_INPUTS {
-  //   weapSkill: 0,
-  //   targets: [],
-  //   noOfVolleys: 0,
-  //   wastedDist: 0,
-  //   volleySize: 3,
-  //   rangeDifficulty: 0 // 0: normal, 1: hard, 2: extreme, 4: critical, 5: impossible
-  // }
-
-  console.log("entered calculate");
-
-  let modGenerator = getRollModifier();
-  let targets = FULLAUTOCALC_INPUTS.targets;
-  let weapSkill = Number(FULLAUTOCALC_INPUTS.weapSkill);
-  let rangeDifficulty = Number(FULLAUTOCALC_INPUTS.rangeDifficulty);
-  let successThresh = [weapSkill, Math.floor(weapSkill / 2), Math.floor(weapSkill / 5), 1];
-  let volleySize = Number(FULLAUTOCALC_INPUTS.volleySize);
-
-  let logContainer = document.querySelector('#fullAutoCalc-results-div');
 
 
-  let addLog = (text, color = 'black') => {
-    let newP = document.createElement('p');
-    newP.classList.add('fullAutoCalc-log-p');
-    newP.style.color = color;
-    newP.innerText = text;
-    logContainer.append(newP);
-  }
 
-  let rollWithMods = (bonPen) => {
-    let rolls = [rollRandom(100)];
 
-    if(bonPen === 0) {
-      addLog("Rolled: " + String(rolls));
-      return rolls[0];
-    }
-    if(bonPen > 0) {
-      rolls.push(...[...Array(bonPen).keys()].map(val => rollRandom(100)));
-      addLog("Rolled: " + String(rolls));
-      return Math.min(...rolls);
-    }
-    else if(bonPen < 0) {      
-      rolls.push(...[...Array(bonPen * -1).keys()].map(val => rollRandom(100)));
-      addLog("Rolled: " + String(rolls));
-      return Math.max(...rolls);
-    }
-  }
 
-  let modifiers;
-  for(let i = 0; i < targets.length; i++) {
-    console.log("Iterating targets");
-    for(let j = 0; j < Number(targets[i].volleys); j++) {
-      console.log("Iterating target's volleys")
-      modifiers = modGenerator.next().value;
-      let successLevel = rangeDifficulty + modifiers[1];
-      let startingBonPen = Number(FULLAUTOCALC_INPUTS.targets[i].bonPen);
-      let roll = rollWithMods(startingBonPen + modifiers[0]);
 
-      console.log("Roll:", roll);
 
-      addLog("Shooting at target: " + targets[i].name + ' (' + successThresh[successLevel] + ' required)', 'black');
 
-      if(roll >= 96) {
-        if( weapSkill < 50 || (weapSkill >= 50 && roll == 100)) {
-          let msg = `--- FUMBLE!`;
-          addLog(msg, 'red');
-          continue;
-        }
-      }
-      if(successLevel > 3) {
-        addLog("----- This shot is of impossible difficulty. Target can't be hit.", 'red');
-        continue;
-      }
-      if(roll == 1 && successLevel < 3) {
-        let msg = `--- CRITICAL HIT! Roll normal damage for ${Math.floor(volleySize / 2)} bullets and IMPALE damage for ${Math.floor(volleySize / 2)} bullets. Add additional effects for critical hit.`;
-        addLog(msg, 'green');
-        continue;
-      }
-      if(roll == 1 && successLevel == 3) {
-        let msg = `--- CRITICAL HIT! But base difficulty is too high. Roll normal damage for ${volleySize} bullets.`;
-        addLog(msg, 'yellow');
-        continue;
-      }
-      if(roll <= successThresh[2] && successLevel > 1) {
-        let msg = `--- target has been hit. Roll damage for ${volleySize} bullets.`;
-        addLog(msg, 'yellow');
-        continue;
-      }
-      if(roll <= successThresh[2] && successLevel <= 1) {
-        let msg = `--- target has been hit for extreme success. Roll normal damage for ${Math.floor(volleySize / 2)} bullets and IMPALE damage for ${Math.floor(volleySize / 2)} bullets.`;
-        addLog(msg, 'green');
-        continue;
-      }
-      if(roll <= successThresh[successLevel] && successLevel <= 1) {
-        let msg = `--- target has been hit. Roll normal damage for ${Math.floor(volleySize / 2)} bullets.`;
-        addLog(msg, 'yellow');
-        continue;
-      }
 
-      let msg = `--- target missed.`;
-      addLog(msg, 'grey');
-    }
-  }
-  
-  console.log("exit calculate");
-  
-}
+
 
 
 function rollRandom(dieNum) {

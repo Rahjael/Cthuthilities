@@ -125,7 +125,7 @@ function getTargetsTable() {
     let newLabel = document.createElement('div');
     newLabel.classList.add(toolPrefix + 'labels');
     newLabel.innerText = label;
-    newLabel.style.margin = '0.5em';
+    // newLabel.style.margin = '0.5em';
     return newLabel;
   });
   labelsRow.append(...labels);

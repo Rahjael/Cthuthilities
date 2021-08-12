@@ -263,7 +263,7 @@ function calculate() {
   let volleySize = Number(FULLAUTOCALC_INPUTS.volleySize);
 
   let logContainer = document.querySelector('#fullAutoCalc-results-div');
-
+  let toLog = [];
 
   let addLog = (text, color = 'black') => {
     let newP = document.createElement('p');
@@ -277,17 +277,17 @@ function calculate() {
     let rolls = [rollRandom(100)];
 
     if(bonPen === 0) {
-      addLog("Rolled: " + String(rolls));
+      toLog.push(["Rolled: " + String(rolls)]);
       return rolls[0];
     }
     if(bonPen > 0) {
       rolls.push(...[...Array(bonPen).keys()].map(val => rollRandom(100)));
-      addLog("Rolled: " + String(rolls));
+      toLog.push(["Rolled: " + String(rolls)]);
       return Math.min(...rolls);
     }
     else if(bonPen < 0) {
       rolls.push(...[...Array(bonPen * -1).keys()].map(val => rollRandom(100)));
-      addLog("Rolled: " + String(rolls));
+      toLog.push(["Rolled: " + String(rolls)]);
       return Math.max(...rolls);
     }
   }
@@ -315,50 +315,48 @@ function calculate() {
       let requiredRoll = successThresh[successLevel] || 'Too low';
 
       let roll = rollWithMods(modifiers[0]);
+      let msg;
 
       console.log("Roll:", roll);
 
-      addLog("Shooting at target: " + targets[i].name + ' (' + requiredRoll + ' required)', 'black');
+      toLog.unshift(["Shooting at target: " + targets[i].name + ' (' + requiredRoll + ' required)', 'black']);
+      toLog.unshift(['----------------------------']);
 
-      if(roll >= 96) {
-        if( weapSkill < 50 || (weapSkill >= 50 && roll == 100)) {
-          let msg = `--- FUMBLE!`;
-          addLog(msg, 'red');
-          continue;
-        }
+      if(roll >= 96 && (weapSkill < 50 || (weapSkill >= 50 && roll == 100))) {
+        msg = `--- FUMBLE!`;
+        toLog.push([msg, 'red']);
       }
-      if(successLevel > 3) {
-        addLog("----- This shot is of impossible difficulty. Target can't be hit.", 'red');
-        continue;
+      else if(successLevel > 3) {
+        msg = "----- This shot is of impossible difficulty. Target can't be hit.";        
+        toLog.push([msg, 'red']);
       }
-      if(roll == 1 && successLevel < 3) {
-        let msg = `--- CRITICAL HIT! Roll normal damage for ${Math.floor(volleySize / 2)} bullets and IMPALE damage for ${Math.floor(volleySize / 2)} bullets. Add additional effects for critical hit.`;
-        addLog(msg, 'green');
-        continue;
+      else if(roll == 1 && successLevel < 3) {
+        msg = `--- CRITICAL HIT! Roll normal damage for ${Math.floor(volleySize / 2)} bullets and IMPALE damage for ${Math.floor(volleySize / 2)} bullets. Add additional effects for critical hit.`;
+        toLog.push([msg, 'green']);
       }
-      if(roll == 1 && successLevel == 3) {
-        let msg = `--- CRITICAL HIT! But base difficulty is too high. Roll normal damage for ${volleySize} bullets.`;
-        addLog(msg, 'yellow');
-        continue;
+      else if(roll == 1 && successLevel == 3) {
+        msg = `--- CRITICAL HIT! But base difficulty is too high. Roll normal damage for ${volleySize} bullets.`;
+        toLog.push([msg, 'red']);
       }
-      if(roll <= successThresh[2] && successLevel > 1) {
-        let msg = `--- target has been hit. Roll damage for ${volleySize} bullets.`;
-        addLog(msg, 'yellow');
-        continue;
+      else if(roll <= successThresh[2] && successLevel > 1) {
+        msg = `--- target has been hit. Roll damage for ${volleySize} bullets.`;
+        toLog.push([msg, 'yellow']);
       }
-      if(roll <= successThresh[2] && successLevel <= 1) {
-        let msg = `--- target has been hit for extreme success. Roll normal damage for ${Math.floor(volleySize / 2)} bullets and IMPALE damage for ${Math.floor(volleySize / 2)} bullets.`;
-        addLog(msg, 'green');
-        continue;
+      else if(roll <= successThresh[2] && successLevel <= 1) {
+        msg = `--- target has been hit for extreme success. Roll normal damage for ${Math.floor(volleySize / 2)} bullets and IMPALE damage for ${Math.floor(volleySize / 2)} bullets.`;
+        toLog.push([msg, 'green']);
       }
-      if(roll <= successThresh[successLevel] && successLevel <= 1) {
+      else if(roll <= successThresh[successLevel] && successLevel <= 1) {
         let msg = `--- target has been hit. Roll normal damage for ${Math.floor(volleySize / 2)} bullets.`;
-        addLog(msg, 'yellow');
-        continue;
+        toLog.push([msg, 'yellow']);
+      }
+      else {
+        msg = `--- target missed.`;
+        toLog.push([msg, 'grey']);
       }
 
-      let msg = `--- target missed.`;
-      addLog(msg, 'grey');
+      toLog.forEach(arr => addLog(...arr));
+      toLog = [];
     }
   }
   

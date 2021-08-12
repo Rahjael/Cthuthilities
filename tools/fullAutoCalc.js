@@ -35,12 +35,6 @@ function fullAutoCalc() {
 
 
 
-
-
-
-
-
-
 function getInputContainer() {
   let inputDiv = document.createElement('div');
 
@@ -203,7 +197,6 @@ function getTargetsTable() {
   addTargetButton.innerText = 'Add Target';
   addTargetButton.classList.add('default-font');
   addTargetButton.id = toolPrefix + 'add-target-button';
-
 
   mainContainer.append(labelsRow, inputFieldsContainer, addTargetButton);
 

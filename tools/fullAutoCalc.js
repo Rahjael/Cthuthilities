@@ -176,8 +176,6 @@ function getTargetsTable() {
           return isMatch;
         })[0]; // XXX Careful here: [0]
         changed[e.target.id] = e.target.value;
-
-        console.log(changed);
       };
       return field;
     });
@@ -223,19 +221,19 @@ function getResultsDiv() {
 
 function* getRollModifier() {
   // Returns [penaltyDice, difficultyIncrease];
-  console.log("Generator 1st iteration");
+  // console.log("Generator 1st iteration");
   yield [0, 0];
-  console.log("Generator 2nd iteration");
+  // console.log("Generator 2nd iteration");
   yield [-1, 0];
-  console.log("Generator 3rd iteration");
+  // console.log("Generator 3rd iteration");
   yield [-2, 0];
-  console.log("Generator 4th iteration");
+  // console.log("Generator 4th iteration");
   yield [-2, 1];
-  console.log("Generator 5th iteration");
+  // console.log("Generator 5th iteration");
   yield [-2, 2];
-  console.log("Generator 6th iteration");
+  // console.log("Generator 6th iteration");
   yield [-2, 3];
-  console.log("Generator 7th iteration");
+  // console.log("Generator 7th iteration");
   yield [-2, 4];
 }
 
@@ -294,9 +292,7 @@ function calculate() {
 
   let modifiers;
   for(let i = 0; i < targets.length; i++) {
-    console.log("Iterating targets");
     for(let j = 0; j < Number(targets[i].volleys); j++) {
-      console.log("Iterating target's volleys")
       modifiers = modGenerator.next().value || [0, 100];
       let startingBonPen = Number(FULLAUTOCALC_INPUTS.targets[i].bonPen);
 
@@ -316,8 +312,6 @@ function calculate() {
 
       let roll = rollWithMods(modifiers[0]);
       let msg;
-
-      console.log("Roll:", roll);
 
       toLog.unshift(["Shooting at target: " + targets[i].name + ' (' + requiredRoll + ' required)', 'black']);
       toLog.unshift(['----------------------------']);
@@ -358,10 +352,7 @@ function calculate() {
       toLog.forEach(arr => addLog(...arr));
       toLog = [];
     }
-  }
-  
-  console.log("exit calculate");
-  
+  }  
 }
 
 
